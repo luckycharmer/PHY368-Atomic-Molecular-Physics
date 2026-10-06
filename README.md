@@ -6,6 +6,13 @@ Course companion for **PHY368: Atomic and Molecular Physics, 3(3,0)**.
 
 > **Development status:** This repository is being built **module by module**. Only completed modules should be treated as student-ready. The official CUOnline course description remains the authoritative syllabus boundary.
 
+## Interactive learning resources
+
+- [X-ray Spectrum Explorer — open in your browser](https://phy368-learning-junaid-ali.drjunaidali.chatgpt.site)
+- [Activity instructions and offline source](resources/xray-spectrum/README.md)
+
+Predict, explore, explain in your own words, and revisit before the next class. This resource supplements the X-ray module; it does not record attendance or completion.
+
 ## Current status
 
 ### Module 1 — Atomic foundations and radiative processes
