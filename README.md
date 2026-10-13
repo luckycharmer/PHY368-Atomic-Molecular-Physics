@@ -8,7 +8,9 @@ Course companion for **PHY368: Atomic and Molecular Physics, 3(3,0)**.
 
 ## Interactive learning resources
 
-- [X-ray Spectrum Explorer — open in your browser](https://phy368-learning-junaid-ali.drjunaidali.chatgpt.site)
+- [13 October: Moseley’s law, Einstein coefficients and radiative decay](resources/moseley-einstein-2026-10-13/README.md) — student notes, practice, offline lab, notebook, data and animations.
+
+- [X-ray Spectrum Explorer — download the offline HTML](resources/xray-spectrum/Spectrum_Explorer.html)
 - [Activity instructions and offline source](resources/xray-spectrum/README.md)
 
 Predict, explore, explain in your own words, and revisit before the next class. This resource supplements the X-ray module; it does not record attendance or completion.

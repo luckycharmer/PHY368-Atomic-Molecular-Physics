@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PHY368 Interactive Lab: Moseley, Einstein coefficients, radiative decay</title>
+<style>
+:root{--navy:#14213D;--teal:#0F8B8D;--orange:#E07A1F;--grey:#5B6573;--light:#F4F7FA;--bg:#fff;--fg:#14213D;--line:#C9D3DD}
+@media (prefers-color-scheme:dark){:root{--bg:#10151f;--fg:#E8EDF3;--light:#1a2230;--line:#34405a;--grey:#9aa7b8}}
+*{box-sizing:border-box}body{margin:0;font-family:Calibri,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+header{background:#14213D;color:#fff;padding:14px 20px;border-bottom:4px solid var(--orange)}
+header h1{margin:0;font-size:20px}header p{margin:4px 0 0;font-size:13px;opacity:.85}
+nav{display:flex;gap:6px;padding:10px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+nav button{border:1px solid var(--line);background:var(--light);color:var(--fg);padding:8px 14px;border-radius:6px;font-size:14px;cursor:pointer}
+nav button[aria-selected=true]{background:var(--teal);color:#fff;border-color:var(--teal)}
+main{padding:16px;max-width:1100px;margin:0 auto}section{display:none}section.on{display:block}
+.grid{display:grid;grid-template-columns:minmax(260px,330px) 1fr;gap:18px}@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--light);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+label{display:block;font-size:13px;margin:10px 0 2px}label b{font-variant-numeric:tabular-nums}
+input[type=range]{width:100%}input[type=number]{width:100%;padding:6px;font-size:14px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--fg)}
+canvas{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:13px;margin-top:8px}td,th{border:1px solid var(--line);padding:5px 8px;text-align:left}th{background:var(--light)}
+.btn{background:var(--orange);color:#fff;border:0;padding:8px 14px;border-radius:6px;font-size:14px;cursor:pointer;margin:8px 6px 0 0}
+.note{font-size:12px;color:var(--grey);margin-top:8px;line-height:1.4}
+h2{margin:0 0 8px;font-size:17px}.big{font-size:15px;line-height:1.5}
+</style></head><body>
+<header><h1>PHY368 interactive lab</h1><p>Moseley's law · Einstein coefficients · radiative decay. Compare a teaching model with tabulated data and explore transition rates.</p></header>
+<nav role="tablist" aria-label="Lab sections">
+<button role="tab" aria-selected="true" data-t="m">1. Moseley explorer</button>
+<button role="tab" aria-selected="false" data-t="e">2. Einstein coefficients</button>
+<button role="tab" aria-selected="false" data-t="d">3. Decay lab</button></nav>
+<main>
+<!-- ============ MOSELEY ============ -->
+<section id="m" class="on"><div class="grid">
+<div class="panel"><h2>Kα estimate</h2>
+<label>Atomic number Z: <b id="zv">29</b><input id="z" type="range" min="13" max="92" value="29"></label>
+<label>Screening σ: <b id="sv">1.00</b><input id="s" type="range" min="0" max="2" step="0.01" value="1"></label>
+<label>Identify element from a line (keV, assumed Kα)<input id="ek" type="number" step="0.01" value="17.15"></label>
+<table id="mout"></table><div id="mid" class="big"></div>
+<p class="note">E ≈ 10.2 (Z−σ)² eV, λ = hc/E with hc = 1239.84 eV·nm. One screening value for both shells: a teaching estimate. Tabulated Kα₁ points: LBNL X-Ray Data Booklet, Table 1-2 (xdb.lbl.gov). Fitted σ is an empirical parameter.</p></div>
+<div><canvas id="mc" width="760" height="470" role="img" aria-label="Moseley plot: square root of Kα energy against atomic number, model line and tabulated points"></canvas></div>
+</div></section>
+<!-- ============ EINSTEIN ============ -->
+<section id="e"><div class="grid">
+<div class="panel"><h2>Thermal radiation and the relations</h2>
+<label>Transition wavelength λ: <b id="lv"></b><input id="l" type="range" min="2" max="8" step="0.01" value="2.69897"></label>
+<label>Temperature T: <b id="tv"></b><input id="t" type="range" min="2" max="4" step="0.01" value="2.48"></label>
+<label>g₁: <b id="g1v">1</b><input id="g1" type="range" min="1" max="8" value="1"></label>
+<label>g₂: <b id="g2v">3</b><input id="g2" type="range" min="1" max="8" value="3"></label>
+<table id="eout"></table>
+<p class="note">B₂₁u/A₂₁ = 1/(eˣ−1), x = hν/k<sub>B</sub>T. g₁B₁₂ = g₂B₂₁ and A₂₁/B₂₁ = 8πhν³/c³, with u per unit ordinary frequency. Steady state with radiation parameter r = B₂₁u/A₂₁: N₂/N₁ = (g₂/g₁) r/(1+r), so this closed, steady-state incoherent pumping model cannot produce inversion.</p></div>
+<div><canvas id="ec1" width="760" height="300" role="img" aria-label="Stimulated to spontaneous ratio against wavelength"></canvas>
+<canvas id="ec2" width="760" height="260" style="margin-top:10px" role="img" aria-label="Two-level saturation: N2 over g2 divided by N1 over g1 against radiation parameter"></canvas></div>
+</div></section>
+<!-- ============ DECAY ============ -->
+<section id="d"><div class="grid">
+<div class="panel"><h2>Ensemble decay</h2>
+<label>Radiative channel a, A (10⁷ s⁻¹): <b id="av">4.0</b><input id="a" type="range" min="0" max="10" step="0.1" value="4"></label>
+<label>Radiative channel b, A (10⁷ s⁻¹): <b id="bv">1.0</b><input id="b" type="range" min="0" max="10" step="0.1" value="1"></label>
+<label>Nonradiative, k (10⁷ s⁻¹): <b id="kv">0.0</b><input id="k" type="range" min="0" max="10" step="0.1" value="0"></label>
+<label>Number of atoms: <b id="nv">400</b><input id="n" type="range" min="100" max="2000" step="100" value="400"></label>
+<button class="btn" id="run">Run</button><button class="btn" id="rst" style="background:var(--teal)">Reset</button>
+<table id="dout"></table>
+<p class="note">Γ = A_a + A_b + k_nr, τ = 1/Γ, radiative branch b_i = A_i/Γ. Each atom decays at a random time (exponential); τ is the mean waiting time and the ensemble e-folding time. Counts scatter around the expected values: try 2000 atoms.</p></div>
+<div><canvas id="dc1" width="760" height="300" role="img" aria-label="Grid of atoms coloured by state"></canvas>
+<canvas id="dc2" width="760" height="260" style="margin-top:10px" role="img" aria-label="Fraction still excited against time, simulation and theory"></canvas></div>
+</div></section>
+</main>
+<script>
+const h=6.62607015e-34,c=2.99792458e8,kB=1.380649e-23,eV=1.602176634e-19,HC=1239.84;
+const SYM="H He Li Be B C N O F Ne Na Mg Al Si P S Cl Ar K Ca Sc Ti V Cr Mn Fe Co Ni Cu Zn Ga Ge As Se Br Kr Rb Sr Y Zr Nb Mo Tc Ru Rh Pd Ag Cd In Sn Sb Te I Xe Cs Ba La Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu Hf Ta W Re Os Ir Pt Au Hg Tl Pb Bi Po At Rn Fr Ra Ac Th Pa U".split(" ");
+const DATA={22:4510.84,24:5414.72,26:6403.84,27:6930.32,28:7478.15,29:8047.78,30:8638.86,42:17479.34,47:22162.92,74:59318.24};
+const $=id=>document.getElementById(id),NAVY="#14213D",TEAL="#0F8B8D",ORANGE="#E07A1F",GREY="#5B6573",PURPLE="#7B4FA0";
+const fg=()=>getComputedStyle(document.body).color;
+const fmt=(x,d=3)=>(x===0?"0":(Math.abs(x)<1e-3||Math.abs(x)>=1e5)?x.toExponential(d-1):x.toPrecision(d));
+function setT(id){document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===id));
+ document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===id));draw();}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>setT(b.dataset.t));
+function axes(g,W,H,m,xl,yl){g.clearRect(0,0,W,H);g.strokeStyle=GREY;g.fillStyle=fg();g.lineWidth=1;g.font="13px sans-serif";
+ g.beginPath();g.moveTo(m.l,m.t);g.lineTo(m.l,H-m.b);g.lineTo(W-m.r,H-m.b);g.stroke();
+ g.fillText(xl,W/2-40,H-8);g.save();g.translate(14,H/2+40);g.rotate(-Math.PI/2);g.fillText(yl,0,0);g.restore();}
+// ---------------- Moseley
+function moseley(){const Z=+$("z").value,S=+$("s").value;$("zv").textContent=Z;$("sv").textContent=S.toFixed(2);
+ const E=10.2*(Z-S)**2,lam=HC/E,nu=E*eV/h;
+ let rows=[["Element",SYM[Z-1]+" (Z = "+Z+")"],["E(Kα) model",fmt(E,5)+" eV = "+fmt(E/1000,4)+" keV"],["λ = hc/E",fmt(lam,4)+" nm"],["ν = E/h",fmt(nu,4)+" Hz"],["√ν",fmt(Math.sqrt(nu),4)+" Hz½"]];
+ if(DATA[Z])rows.push(["Tabulated Kα₁",fmt(DATA[Z]/1000,5)+" keV (model "+(100*(E-DATA[Z])/DATA[Z]).toFixed(2)+" %)"]);
+ $("mout").innerHTML=rows.map(r=>"<tr><th>"+r[0]+"</th><td>"+r[1]+"</td></tr>").join("");
+ const ek=+$("ek").value*1000,z=S+Math.sqrt(ek/10.2),zr=Math.round(z);
+ $("mid").innerHTML="A line at "+(ek/1000)+" keV gives Z ≈ "+z.toFixed(2)+" → <b>"+(SYM[zr-1]||"?")+"</b> (Z = "+zr+"), if it is Kα and σ = "+S.toFixed(2)+".";
+ const cv=$("mc"),g=cv.getContext("2d"),W=cv.width,H=cv.height,m={l:60,r:20,t:20,b:50};
+ axes(g,W,H,m,"Atomic number Z","√E  (eV½)");
+ const X=z=>m.l+(z-10)/(95-10)*(W-m.l-m.r),Y=v=>H-m.b-(v/330)*(H-m.t-m.b);
+ g.fillStyle=fg();for(let zz=20;zz<=90;zz+=10){g.fillText(zz,X(zz)-8,H-m.b+16);}for(let v=0;v<=300;v+=100){g.fillText(v,m.l-34,Y(v)+4);}
+ g.strokeStyle=TEAL;g.lineWidth=3;g.beginPath();for(let zz=13;zz<=92;zz+=1){const v=Math.sqrt(10.2)*(zz-S);zz==13?g.moveTo(X(zz),Y(v)):g.lineTo(X(zz),Y(v));}g.stroke();
+ g.fillStyle=ORANGE;for(const k in DATA){g.beginPath();g.arc(X(+k),Y(Math.sqrt(DATA[k])),6,0,7);g.fill();g.fillStyle=fg();g.fillText(SYM[k-1],X(+k)-6,Y(Math.sqrt(DATA[k]))-10);g.fillStyle=ORANGE;}
+ g.fillStyle=NAVY;g.beginPath();g.arc(X(Z),Y(Math.sqrt(E)),8,0,7);g.fill();g.lineWidth=2;g.strokeStyle=NAVY;
+ g.fillStyle=TEAL;g.fillText("model √(10.2)(Z−σ)",m.l+14,m.t+14);g.fillStyle=ORANGE;g.fillText("● tabulated Kα₁",m.l+14,m.t+32);g.fillStyle=fg();g.fillText("● selected Z",m.l+14,m.t+50);}
+["z","s","ek"].forEach(i=>$(i).oninput=moseley);
+// ---------------- Einstein
+function einstein(){const lam=Math.pow(10,+$("l").value),T=Math.pow(10,+$("t").value),g1=+$("g1").value,g2=+$("g2").value;
+ $("lv").textContent=fmt(lam,3)+" nm";$("tv").textContent=fmt(T,3)+" K";$("g1v").textContent=g1;$("g2v").textContent=g2;
+ const nu=c/(lam*1e-9),x=h*nu/(kB*T),r=1/Math.expm1(x),AB=8*Math.PI*h*nu**3/c**3;
+ $("eout").innerHTML=[["ν = c/λ",fmt(nu,3)+" Hz"],["x = hν/k_BT",fmt(x,4)],["B₂₁u/A₂₁ = 1/(eˣ−1)",fmt(r,3)],["Dominant process",r>1?"stimulated emission":"spontaneous emission"],["B₁₂/B₂₁ = g₂/g₁",fmt(g2/g1,4)],["A₂₁/B₂₁ = 8πhν³/c³",fmt(AB,3)+" J·s·m⁻³"]].map(a=>"<tr><th>"+a[0]+"</th><td>"+a[1]+"</td></tr>").join("");
+ let cv=$("ec1"),g=cv.getContext("2d"),W=cv.width,H=cv.height,m={l:70,r:20,t:20,b:48};axes(g,W,H,m,"log₁₀ wavelength (nm)","log₁₀ (B₂₁u/A₂₁)");
+ const X=a=>m.l+(a-2)/6*(W-m.l-m.r),Y=v=>m.t+(1-(v+60)/(60+8))*(H-m.t-m.b);
+ g.fillStyle=fg();for(let a=2;a<=8;a++)g.fillText(a,X(a)-4,H-m.b+16);for(let v=-60;v<=0;v+=20)g.fillText(v,m.l-34,Y(v)+4);g.fillText("0",m.l-14,Y(0)+4);
+ g.strokeStyle=GREY;g.setLineDash([5,4]);g.beginPath();g.moveTo(m.l,Y(0));g.lineTo(W-m.r,Y(0));g.stroke();g.setLineDash([]);
+ g.strokeStyle=TEAL;g.lineWidth=3;g.beginPath();let first=true;for(let a=2;a<=8;a+=0.02){const xx=h*c/(Math.pow(10,a)*1e-9*kB*T);let v=Math.log10(1/Math.expm1(xx));if(!isFinite(v))v=-60;v=Math.max(v,-60);const px=X(a),py=Y(Math.min(v,8));first?g.moveTo(px,py):g.lineTo(px,py);first=false;}g.stroke();
+ const lv=Math.log10(lam);let vv=Math.log10(r);if(!isFinite(vv))vv=-60;vv=Math.max(-60,Math.min(8,vv));g.fillStyle=ORANGE;g.beginPath();g.arc(X(lv),Y(vv),8,0,7);g.fill();
+ g.fillStyle=GREY;g.fillText("stimulated = spontaneous",W-210,Y(0)-6);
+ cv=$("ec2");g=cv.getContext("2d");W=cv.width;H=cv.height;const m2={l:70,r:20,t:20,b:48};axes(g,W,H,m2,"log₁₀ r,  r = B₂₁u/A₂₁","(N₂/g₂)/(N₁/g₁)");
+ const X2=a=>m2.l+(a+3)/6*(W-m2.l-m2.r),Y2=v=>m2.t+(1-v/1.2)*(H-m2.t-m2.b);g.fillStyle=fg();for(let a=-3;a<=3;a++)g.fillText(a,X2(a)-4,H-m2.b+16);for(let v=0;v<=1;v+=0.5)g.fillText(v,m2.l-30,Y2(v)+4);
+ g.strokeStyle=ORANGE;g.lineWidth=3;g.beginPath();for(let a=-3;a<=3;a+=0.05){const rr=Math.pow(10,a),v=rr/(1+rr);a==-3?g.moveTo(X2(a),Y2(v)):g.lineTo(X2(a),Y2(v));}g.stroke();
+ g.strokeStyle=GREY;g.setLineDash([5,4]);g.beginPath();g.moveTo(m2.l,Y2(1));g.lineTo(W-m2.r,Y2(1));g.stroke();g.setLineDash([]);g.fillStyle=GREY;g.fillText("threshold = 1; approached in the steady radiative rate model",m2.l+10,Y2(1)-8);}
+["l","t","g1","g2"].forEach(i=>$(i).oninput=einstein);
+// ---------------- Decay
+let sim=null;
+function decayParams(){const a=+$("a").value,b=+$("b").value,k=+$("k").value;$("av").textContent=a.toFixed(1);$("bv").textContent=b.toFixed(1);$("kv").textContent=k.toFixed(1);$("nv").textContent=$("n").value;
+ const tot=(a+b+k)*1e7;const tau=tot>0?1/tot:Infinity;
+ let rows=[["Γ(total)",fmt(tot,3)+" s⁻¹"],["τ = 1/Γ",isFinite(tau)?fmt(tau*1e9,4)+" ns":"∞"],["Branching a / b / nonrad",tot>0?[a,b,k].map(v=>(v*1e7/tot).toFixed(3)).join(" / "):"–"],["Photon yield (a + b)",tot>0?((a+b)*1e7/tot).toFixed(3):"–"],["Radiative-only τ",(a+b)>0?fmt(1e9/((a+b)*1e7),4)+" ns":"∞"],["Fraction left after 40 ns",isFinite(tau)?(Math.exp(-40e-9/tau)).toFixed(4):"1"],["t½ = τ ln 2",isFinite(tau)?fmt(tau*Math.LN2*1e9,4)+" ns":"∞"]];
+ $("dout").innerHTML=rows.map(r=>"<tr><th>"+r[0]+"</th><td>"+r[1]+"</td></tr>").join("");return {a,b,k,tot,tau};}
+function build(){const p=decayParams(),N=+$("n").value;if(!isFinite(p.tau)){sim=null;return;}
+ const td=[],br=[];for(let i=0;i<N;i++){td.push(-Math.log(1-Math.random())*p.tau);const u=Math.random()*p.tot;br.push(u<p.a*1e7?0:(u<(p.a+p.b)*1e7?1:2));}
+ sim={p,td,br,N,t:0,tmax:5*p.tau,run:false};}
+function decay(){const p=decayParams();if(!sim||sim.p.tot!==p.tot||sim.N!=+$("n").value)build();
+ const cv=$("dc1"),g=cv.getContext("2d"),W=cv.width,H=cv.height;g.clearRect(0,0,W,H);
+ if(!sim){g.fillStyle=fg();g.fillText("No decay: all atoms remain excited; lifetime is infinite.",20,30);const cc=$("dc2"),qq=cc.getContext("2d");qq.clearRect(0,0,cc.width,cc.height);qq.fillStyle=fg();qq.font="14px sans-serif";qq.fillText("Surviving fraction = 1 at every time. Branching is undefined.",30,50);return;}
+ const N=sim.N,cols=Math.ceil(Math.sqrt(N*W/H*0.9)),rows=Math.ceil(N/cols),dx=(W-20)/cols,dy=(H-20)/rows,rad=Math.max(1.5,Math.min(dx,dy)*0.36);
+ let na=0,nb=0,nk=0;for(let i=0;i<N;i++){const d=sim.td[i]<=sim.t;let col=ORANGE;if(d){const b=sim.br[i];col=b==0?TEAL:b==1?PURPLE:GREY;if(b==0)na++;else if(b==1)nb++;else nk++;}
+  g.fillStyle=col;g.beginPath();g.arc(10+(i%cols+0.5)*dx,10+(Math.floor(i/cols)+0.5)*dy,rad,0,7);g.fill();}
+ g.fillStyle=fg();g.font="13px sans-serif";g.fillText("t = "+(sim.t*1e9).toFixed(1)+" ns   decayed: a "+na+", b "+nb+", nonradiative "+nk+"   (orange = excited)",12,H-4);
+ const c2=$("dc2"),q=c2.getContext("2d"),W2=c2.width,H2=c2.height,m={l:70,r:20,t:20,b:48};axes(q,W2,H2,m,"time (ns)","fraction still excited");
+ const X=t=>m.l+t/sim.tmax*(W2-m.l-m.r),Y=v=>m.t+(1-v)*(H2-m.t-m.b);q.fillStyle=fg();for(let i=0;i<=5;i++){const t=i*sim.tmax/5;q.fillText((t*1e9).toFixed(0),X(t)-8,H2-m.b+16);}for(let v=0;v<=1;v+=0.5)q.fillText(v,m.l-30,Y(v)+4);
+ q.strokeStyle=NAVY;q.setLineDash([6,4]);q.lineWidth=2;q.beginPath();for(let i=0;i<=100;i++){const t=i/100*sim.tmax;i?q.lineTo(X(t),Y(Math.exp(-t/p.tau))):q.moveTo(X(t),Y(1));}q.stroke();q.setLineDash([]);
+ q.strokeStyle=ORANGE;q.lineWidth=3;q.beginPath();const steps=200;for(let i=0;i<=steps;i++){const t=i/steps*sim.t;let c=0;for(let j=0;j<N;j++)if(sim.td[j]>t)c++;const v=c/N;i?q.lineTo(X(t),Y(v)):q.moveTo(X(t),Y(v));}q.stroke();
+ q.strokeStyle=GREY;q.setLineDash([2,3]);q.beginPath();q.moveTo(X(p.tau),Y(0));q.lineTo(X(p.tau),Y(1));q.stroke();q.setLineDash([]);q.fillStyle=GREY;q.fillText("t = τ",X(p.tau)+4,Y(0.95));
+ q.fillStyle=NAVY;q.fillText("dashed: theory e^(−t/τ)    orange: this ensemble",m.l+10,m.t+14);}
+let raf=null;function loop(){if(sim&&sim.run){sim.t=Math.min(sim.tmax,sim.t+sim.tmax/300);if(sim.t>=sim.tmax)sim.run=false;}decay();if(sim&&sim.run)raf=requestAnimationFrame(loop);}
+$("run").onclick=()=>{if(!sim||sim.t>=sim.tmax){build();}if(sim){sim.run=true;cancelAnimationFrame(raf);loop();}};
+$("rst").onclick=()=>{build();if(sim)sim.t=0;decay();};
+["a","b","k","n"].forEach(i=>$(i).oninput=()=>{build();decay();});
+function draw(){moseley();einstein();decay();}
+draw();window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",draw);
+</script></body></html>
